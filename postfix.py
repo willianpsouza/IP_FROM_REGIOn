@@ -87,16 +87,21 @@ def postfix(data,msg="NOT SPAM FROM you"):
         ret += ("%s   %s #%s \n" % (c,'   REJECT',msg))
     return ret
 
-def main():
+def check_files(download_url):
+    for c in download_url:
+        if not os.path.isfile(download_url[c]['file']):
+            print('Arquivo nao existe',download_url[c])
+            DownloadFiles({c : download_url[c]})
+
+def remain():
     download_url = {}
     download_url['apnic'] =  {'url' : 'https://ftp.apnic.net/stats/apnic/delegated-apnic-latest','file' : 'delegated-lacnic-apnic.txt'}
     download_url['iana'] = {'url' : 'https://ftp.apnic.net/stats/iana/delegated-iana-latest', 'file' : 'delegated-iana-latest.txt'}
     download_url['ripencc'] = {'url' : 'https://ftp.apnic.net/stats/ripe-ncc/delegated-ripencc-latest', 'file' : 'delegated-ripencc-latest.txt'}
     download_url['lacnic'] = {'url' : 'https://ftp.apnic.net/stats/lacnic/delegated-lacnic-latest', 'file' : 'delegated-lacnic-latest.txt'}
 
-    if len(sys.argv) >= 2:
-        if sys.argv[1] == "all":
-            DownloadFiles(download_url)
+    check_files(download_url)
+    
     p = ProcessFiles(download_url)
     p = postfix(p)
     destfile = "./FILTER_HOSTS"
@@ -113,3 +118,5 @@ def main():
     return True
 
 main()
+
+
